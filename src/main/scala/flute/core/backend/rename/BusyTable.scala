@@ -18,16 +18,16 @@ class BusyTable(nRead: Int, nCheckIn: Int, nCheckOut: Int) extends Module {
     val checkIn  = Input(Vec(nCheckIn, Valid(UInt(phyRegAddrWidth.W))))
     val checkOut = Input(Vec(nCheckOut, Valid(UInt(phyRegAddrWidth.W))))
 
-    // val debug = new Bundle {
-    //   val table = Output(UInt(phyRegAmount.W))
-    // }
+    val debug = new Bundle {
+      val table = Output(UInt(phyRegAmount.W))
+    }
   })
 
   val busyTable = RegInit(VecInit(Seq.fill(phyRegAmount)(0.B)))
 
-  // for (i <- 0 until nRead) {
-  //   io.read(i).busy := busyTable(io.read(i).addr)
-  // }
+  for (i <- 0 until nRead) {
+    io.read(i).busy := busyTable(io.read(i).addr)
+  }
   
   for (i <- 0 until nRead) {
     val busy = (UIntToOH(io.read(i).addr)(n - 1, 0) & busyTable.asUInt).orR
@@ -43,17 +43,17 @@ class BusyTable(nRead: Int, nCheckIn: Int, nCheckOut: Int) extends Module {
 
   // different method 
 
-  // for (i <- 0 until nCheckIn) {
-  //   when(io.checkIn(i).valid) {
-  //     busyTable(io.checkIn(i).bits) := 1.B
-  //   }
-  // }
+  for (i <- 0 until nCheckIn) {
+    when(io.checkIn(i).valid) {
+      busyTable(io.checkIn(i).bits) := 1.B
+    }
+  }
 
-  // for (i <- 0 until nCheckOut) {
-  //   when(io.checkOut(i).valid) {
-  //     busyTable(io.checkOut(i).bits) := 0.B
-  //   }
-  // }
+  for (i <- 0 until nCheckOut) {
+    when(io.checkOut(i).valid) {
+      busyTable(io.checkOut(i).bits) := 0.B
+    }
+  }
 
-  // io.debug.table := busyTable.asUInt
+  io.debug.table := busyTable.asUInt
 }
