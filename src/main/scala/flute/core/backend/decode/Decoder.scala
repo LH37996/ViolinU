@@ -103,7 +103,7 @@ class Decoder extends Module {
     mapping = Seq(
       Op1Recipe.rs      -> 0.U,
       Op1Recipe.pcPlus8 -> (io.instr.addr + 8.U),
-      Op1Recipe.shamt   -> instruction(10, 6),
+      Op1Recipe.shamt   -> instruction(24, 20),
       Op1Recipe.zero    -> 0.U
     )
   )
@@ -112,9 +112,10 @@ class Decoder extends Module {
     key = controller.io.op2Recipe,
     default = 0.U,
     mapping = Seq(
-      Op2Recipe.rt   -> 0.U,
-      Op2Recipe.imm  -> extendedImm,
-      Op2Recipe.zero -> 0.U
+      Op2Recipe.rt    -> 0.U,
+      Op2Recipe.imm   -> extendedImm,
+      Op2Recipe.shamt -> instruction(24, 20),
+      Op2Recipe.zero  -> 0.U
     )
   )
   io.microOp.op2.valid := Mux(controller.io.op2Recipe === Op2Recipe.rt, 0.B, 1.B)

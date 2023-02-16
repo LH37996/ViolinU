@@ -32,15 +32,15 @@ class Controller extends Module {
     /*** RV32I ***/
     /** Integer Computational Instructions **/
     /* Interger Register-Immediate Instructions */
-    ADDI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.add,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rt,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SLTI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.slt,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rt,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SLTIU  -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sltu, Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rt,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    ANDI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.and,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rt,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
-    ORI    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.or,   Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rt,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
-    XORI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.xor,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rt,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
-    SLLI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.sll,  Op1Recipe.shamt,   Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SRLI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.srl,  Op1Recipe.shamt,   Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SRAI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.sra,  Op1Recipe.shamt,   Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    ADDI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.add,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SLTI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.slt,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SLTIU  -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sltu, Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    ANDI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.and,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
+    ORI    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.or,   Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
+    XORI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.xor,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
+    SLLI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.sll,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SRLI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.srl,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SRAI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.sra,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     LUI    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.or,   Op1Recipe.zero,    Op2Recipe.imm,  BJCond.none, RegDst.rt,    ImmRecipe.lui,  InstrType.alu, MDUOp.none),
     // AUIPC
     /* Interger Register-Register Instructions */
@@ -205,9 +205,10 @@ object Op1Recipe {
 object Op2Recipe {
   val width = 2
 
-  val rt   = 0.U(width.W)
-  val imm  = 1.U(width.W)
-  val zero = 2.U(width.W)
+  val rt    = 0.U(width.W)
+  val imm   = 1.U(width.W)
+  val shamt = 2.U(width.W)
+  val zero  = 3.U(width.W)
 }
 
 object BJCond {
