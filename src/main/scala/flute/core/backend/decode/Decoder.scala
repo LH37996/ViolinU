@@ -73,9 +73,9 @@ class Decoder extends Module {
     key = controller.io.immRecipe,
     default = 0.U(dataWidth.W),
     mapping = Seq(
-      ImmRecipe.sExt -> Cat(Fill(16, instruction(15)), instruction(15, 0)),
-      ImmRecipe.uExt -> Cat(0.U(16.W), instruction(15, 0)),
-      ImmRecipe.lui  -> Cat(instruction(15, 0), 0.U(16.W)),
+      ImmRecipe.sExt -> Cat(Fill(20, instruction(31)), instruction(31, 20)),
+      ImmRecipe.uExt -> Cat(0.U(20.W), instruction(31, 20)),
+      ImmRecipe.lui  -> Cat(instruction(31, 12), 0.U(12.W)),
     )
   )
   io.microOp.immediate := extendedImm
@@ -103,6 +103,7 @@ class Decoder extends Module {
     mapping = Seq(
       Op1Recipe.rs      -> 0.U,
       Op1Recipe.pcPlus8 -> (io.instr.addr + 8.U),
+      Op1Recipe.pc      -> io.instr.addr,
       Op1Recipe.shamt   -> instruction(24, 20),
       Op1Recipe.zero    -> 0.U
     )
@@ -126,8 +127,8 @@ class Decoder extends Module {
   // RegFile /////////////////////////////////////////////////////////
   io.microOp.writeRegAddr := writeArfRegAddr
   // Issue Wake Up
-  io.microOp.rsAddr := instruction(25, 21)
-  io.microOp.rtAddr := instruction(20, 16)
+  io.microOp.rsAddr := instruction(19, 15)
+  io.microOp.rtAddr := instruction(24, 20)
   /////////////////////////////////////////////////////////////////
 
   io.microOp.robAddr := DontCare

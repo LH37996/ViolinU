@@ -35,14 +35,14 @@ class Controller extends Module {
     ADDI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.add,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     SLTI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.slt,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     SLTIU  -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sltu, Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    ANDI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.and,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
-    ORI    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.or,   Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
-    XORI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.xor,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.uExt, InstrType.alu, MDUOp.none),
-    SLLI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.sll,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SRLI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.srl,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SRAI   -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.sra,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    LUI    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.or,   Op1Recipe.zero,    Op2Recipe.imm,  BJCond.none, RegDst.rt,    ImmRecipe.lui,  InstrType.alu, MDUOp.none),
-    // AUIPC
+    ANDI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.and,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    ORI    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.or,   Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    XORI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.xor,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SLLI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sll,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SRLI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.srl,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SRAI   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sra,  Op1Recipe.rs,      Op2Recipe.shamt,BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    LUI    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.or,   Op1Recipe.zero,    Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.lui,  InstrType.alu, MDUOp.none),
+    AUIPC  -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.add,  Op1Recipe.pc,      Op2Recipe.imm,  BJCond.none, RegDst.rd,    ImmRecipe.lui,  InstrType.alu, MDUOp.none),
     /* Interger Register-Register Instructions */
     ADD    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.add,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     SLT    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.slt,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
@@ -50,10 +50,10 @@ class Controller extends Module {
     AND    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.and,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     OR     -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.or,   Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     XOR    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.xor,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SLL    -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.sll,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SRL    -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.srl,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SLL    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sll,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SRL    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.srl,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     SUB    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sub,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    SRA    -> List(true.B,  LoadMode.disable, StoreMode.disable,    ALUOp.sra,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    SRA    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sra,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     /** Control Transfer Instructions **/
     /* Unconditional Jumps */
     JAL    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.zero,    Op2Recipe.zero, BJCond.jal,   RegDst.GPR31, ImmRecipe.sExt, InstrType.alu, MDUOp.none),
@@ -200,6 +200,7 @@ object Op1Recipe {
   val zero    = 3.U(width.W)
   val hi      = 4.U(width.W)
   val lo      = 5.U(width.W)
+  val pc      = 6.U(width.W)
 }
 
 object Op2Recipe {
