@@ -40,12 +40,12 @@ class PreDecode extends Module {
     // val stallReq    = Output(Bool())
   })
 
-  val pcplusfour = io.pc + 4.U
+  val ins = io.instruction.bits
 
   when(io.instruction.valid && Inst.needUpdate(io.instruction.bits)) {
-    io.out.predictBT := Cat(pcplusfour(31, 28), io.instruction.bits(25, 0), 0.U(2.W))
+    io.out.predictBT := io.pc + Cat(Fill(12, ins(31)), ins(19, 12), ins(20), ins(30, 25), ins(24, 21), 0.U(1.W))
   }.otherwise {
-    io.out.predictBT := io.pc + 8.U
+    io.out.predictBT := io.pc + 4.U
   }
 
   io.out.isBranch := io.instruction.valid &&

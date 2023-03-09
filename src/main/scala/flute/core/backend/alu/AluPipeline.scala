@@ -45,7 +45,7 @@ class AluPipeline extends Module {
   read2Ex.op1.op := op1
   read2Ex.op2.op := op2
 
-  /// stage 2: ALU Execute & Branch Compute & BusyTable Checkout  & Bypass Out ///
+  /// stage 2: ALU Execute & Branch Compute & BusyTable Checkout & Bypass Out ///
   val stage2 = Module(new StageReg(Valid(new MicroOp(true))))
   stage2.io.in.bits  := read2Ex
   stage2.io.in.valid := readIn.valid
@@ -85,7 +85,7 @@ class AluPipeline extends Module {
   ex2Wb.valid       := exIn.valid
   ex2Wb.robAddr     := exIn.bits.robAddr
   ex2Wb.regWEn      := exIn.bits.regWriteEn
-  ex2Wb.regWData    := Mux(isAndLink, exIn.bits.pc + 8.U, alu.io.result)
+  ex2Wb.regWData    := Mux(isAndLink, exIn.bits.pc + 4.U, alu.io.result)
   ex2Wb.regWAddr    := exIn.bits.writeRegAddr
   ex2Wb.exception   := exceptions
   ex2Wb.badvaddr    := exIn.bits.pc
