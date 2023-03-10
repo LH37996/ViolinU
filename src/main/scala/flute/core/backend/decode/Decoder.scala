@@ -60,8 +60,8 @@ class Decoder extends Module {
 
   // 解开 Fetch 传来的 IBEntry 结构
   // pc没对齐给空指令
-  val instruction = Wire(UInt(instrWidth.W))
-  instruction   := Mux(io.instr.addr(1, 0) === 0.U, io.instr.inst, 0.U(dataWidth.W))
+  val inst = Wire(UInt(instrWidth.W))
+  inst := Mux(io.instr.addr(1, 0) === 0.U, io.instr.inst, 0.U(dataWidth.W))
   io.microOp.pc := io.instr.addr
 
   io.microOp.predictBT := io.instr.predictBT
@@ -73,22 +73,23 @@ class Decoder extends Module {
     key = controller.io.immRecipe,
     default = 0.U(dataWidth.W),
     mapping = Seq(
-      ImmRecipe.sExt -> Cat(Fill(20, instruction(31)), instruction(31, 20)),
-      ImmRecipe.uExt -> Cat(0.U(20.W), instruction(31, 20)),
-      ImmRecipe.lui  -> Cat(instruction(31, 12), 0.U(12.W)),
+      ImmRecipe.sExt -> Cat(Fill(20, inst(31)), inst(31, 20)),
+      ImmRecipe.uExt -> Cat(0.U(20.W), inst(31, 20)),
+      ImmRecipe.lui  -> Cat(inst(31, 12), 0.U(12.W)),
+      ImmRecipe.b    -> Cat(Fill(20, inst(31)), inst(7), inst(30, 25), inst(11, 8), 0.U(1.W)),
     )
   )
   io.microOp.immediate := extendedImm
   /////////////////////////////////////////////////////////////////
 
   // Controller //////////////////////////////////////////////////////
-  controller.io.instruction := instruction
+  controller.io.instruction := inst
   val writeArfRegAddr = MuxLookup(
     key = controller.io.regDst,
-    default = instruction(15, 11),
+    default = inst(15, 11),
     mapping = Seq(
-      RegDst.rt    -> instruction(20, 16),
-      RegDst.rd    -> instruction(15, 11),
+      RegDst.rt    -> inst(20, 16),
+      RegDst.rd    -> inst(15, 11),
       RegDst.GPR31 -> 31.U(regAddrWidth.W)
     )
   )
@@ -104,7 +105,7 @@ class Decoder extends Module {
       Op1Recipe.rs      -> 0.U,
       Op1Recipe.pcPlus8 -> (io.instr.addr + 8.U),
       Op1Recipe.pc      -> io.instr.addr,
-      Op1Recipe.shamt   -> instruction(24, 20),
+      Op1Recipe.shamt   -> inst(24, 20),
       Op1Recipe.zero    -> 0.U
     )
   )
@@ -115,7 +116,7 @@ class Decoder extends Module {
     mapping = Seq(
       Op2Recipe.rt    -> 0.U,
       Op2Recipe.imm   -> extendedImm,
-      Op2Recipe.shamt -> instruction(24, 20),
+      Op2Recipe.shamt -> inst(24, 20),
       Op2Recipe.zero  -> 0.U
     )
   )
@@ -127,19 +128,19 @@ class Decoder extends Module {
   // RegFile /////////////////////////////////////////////////////////
   io.microOp.writeRegAddr := writeArfRegAddr
   // Issue Wake Up
-  io.microOp.rsAddr := instruction(19, 15)
-  io.microOp.rtAddr := instruction(24, 20)
+  io.microOp.rsAddr := inst(19, 15)
+  io.microOp.rtAddr := inst(24, 20)
   /////////////////////////////////////////////////////////////////
 
   io.microOp.robAddr := DontCare
 
-  val cp0RegAddr = instruction(15, 11)
-  val cp0RegSel  = instruction(2, 0)
+  val cp0RegAddr = inst(15, 11)
+  val cp0RegSel  = inst(2, 0)
 
   io.microOp.cp0RegAddr := cp0RegAddr
   io.microOp.cp0RegSel  := cp0RegSel
-  io.microOp.syscall    := instruction === SYSCALL
-  io.microOp.break      := instruction === BREAK
+  io.microOp.syscall    := inst === SYSCALL
+  io.microOp.break      := inst === BREAK
   io.microOp.reservedI  := controller.io.mduOp === MDUOp.ri
-  io.microOp.eret       := instruction === ERET
+  io.microOp.eret       := inst === ERET
 }

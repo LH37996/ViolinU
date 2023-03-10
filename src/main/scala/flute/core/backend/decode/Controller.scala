@@ -56,15 +56,15 @@ class Controller extends Module {
     SRA    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.sra,  Op1Recipe.rs,      Op2Recipe.rt,   BJCond.none, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     /** Control Transfer Instructions **/
     /* Unconditional Jumps */
-    JAL    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.zero,    Op2Recipe.zero, BJCond.jal,  RegDst.rd,    ImmRecipe.j,    InstrType.alu, MDUOp.none),
-    JALR   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.zero, BJCond.jalr,  RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    JAL    -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.zero,    Op2Recipe.zero, BJCond.jal,  RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
+    JALR   -> List(true.B,  LoadMode.disable,  StoreMode.disable,   ALUOp.add,  Op1Recipe.rs,      Op2Recipe.imm,  BJCond.jalr, RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
     /* Conditional Branches */
-    BEQ    -> List(false.B, LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.rt,   BJCond.beq,   RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    BNE    -> List(false.B, LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.rt,   BJCond.bne,   RegDst.rd,    ImmRecipe.sExt, InstrType.alu, MDUOp.none),
-    // BLT
-    // BLTU
-    // BGE
-    // BGEU
+    BEQ    -> List(false.B, LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.rt,   BJCond.beq,  RegDst.rd,    ImmRecipe.b,    InstrType.alu, MDUOp.none),
+    BNE    -> List(false.B, LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.rt,   BJCond.bne,  RegDst.rd,    ImmRecipe.b,    InstrType.alu, MDUOp.none),
+    BLT    -> List(false.B, LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.rt,   BJCond.blt,  RegDst.rd,    ImmRecipe.b,    InstrType.alu, MDUOp.none),
+    BLTU   -> List(false.B, LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.rt,   BJCond.bltu, RegDst.rd,    ImmRecipe.b,    InstrType.alu, MDUOp.none),
+    BGE    -> List(false.B, LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.rt,   BJCond.bge,  RegDst.rd,    ImmRecipe.b,    InstrType.alu, MDUOp.none),
+    BGEU   -> List(false.B, LoadMode.disable,  StoreMode.disable,   ALUOp.none, Op1Recipe.rs,      Op2Recipe.rt,   BJCond.bgeu,  RegDst.rd,    ImmRecipe.b,    InstrType.alu, MDUOp.none),
     /** Load and Store Instructions **/
     LW     -> List(true.B,  LoadMode.word,     StoreMode.disable,   ALUOp.none,  Op1Recipe.rs,  Op2Recipe.zero,BJCond.none, RegDst.rt,    ImmRecipe.sExt, InstrType.loadStore, MDUOp.none),
     LH     -> List(true.B,  LoadMode.halfS,    StoreMode.disable,   ALUOp.none,  Op1Recipe.rs,  Op2Recipe.zero,BJCond.none, RegDst.rt,    ImmRecipe.sExt, InstrType.loadStore, MDUOp.none),
@@ -213,7 +213,7 @@ object Op2Recipe {
 }
 
 object BJCond {
-  val amount = 13
+  val amount = 17
   val width = log2Up(amount)
 
   val none = 0.U(width.W)
@@ -225,10 +225,15 @@ object BJCond {
   val bltz  = 6.U(width.W)
   val bltzal  = 7.U(width.W)
   val bne   = 8.U(width.W)
-  val j  = 9.U(width.W)
-  val jal  = 10.U(width.W)
-  val jalr   = 11.U(width.W)
+  val j = 9.U(width.W)
+  val jal = 10.U(width.W)
+  val jalr = 11.U(width.W)
   val jr  = 12.U(width.W)
+
+  val blt = 13.U(width.W)
+  val bltu = 14.U(width.W)
+  val bge = 15.U(width.W)
+  val bgeu = 16.U(width.W)
 }
 
 object RegDst {
@@ -245,6 +250,7 @@ object ImmRecipe {
   val sExt = 0.U(width.W)
   val uExt = 1.U(width.W)
   val lui  = 2.U(width.W)
+  val b    = 3.U(width.W)
 }
 
 object InstrType {

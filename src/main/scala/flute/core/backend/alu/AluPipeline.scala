@@ -65,7 +65,7 @@ class AluPipeline extends Module {
   io.bypass.out := alu.io.result
 
   // branch
-  val (taken, target) = AluPipelineUtil.branchRes(exIn.bits, alu.io.flag)
+  val (taken, target) = AluPipelineUtil.branchRes(exIn.bits, alu.io.flag, alu.io.result)
 
   val isAndLink = (
     exIn.bits.bjCond === BJCond.bgezal ||
@@ -112,7 +112,7 @@ class AluPipeline extends Module {
 }
 
 class AluExWbBundle extends Bundle {
-  // 需要包含： ALU res, Branch res, Exception res
+  // 需要包含：ALU res, Branch res, Exception res
   val valid     = Bool() // 总体valid: 是否为气泡
   val robAddr   = UInt(robEntryNumWidth.W)
   val exception = new ExceptionBundle
@@ -165,7 +165,7 @@ object AluPipelineUtil {
     rob
   }
 
-  def branchRes(uop: MicroOp, aluFlag: Flag) = {
+  def branchRes(uop: MicroOp, aluFlag: Flag, aluResult: UInt) = {
     val branchTaken = MuxLookup(
       key = uop.bjCond,
       default = 0.B,
@@ -183,17 +183,22 @@ object AluPipelineUtil {
         BJCond.jal    -> 1.B,
         BJCond.jalr   -> 1.B,
         BJCond.jr     -> 1.B,
+
+        BJCond.blt    -> aluFlag.lessS,
+        BJCond.bltu   -> aluFlag.lessU,
+        BJCond.bge    -> !aluFlag.lessS,
+        BJCond.bgeu   -> !aluFlag.lessU,
       )
     )
     // J & JAL, 已经被 Fetch 处理，给了 taken，且计算地址直接取了 Fetch 给的 PredictBT，如果要改预测的话需要修
     val branchAddr = WireInit(0.U(addrWidth.W)) // 默认情况下返回0
 
     when(uop.bjCond === BJCond.jr || uop.bjCond === BJCond.jalr) {
-      branchAddr := uop.op1.op
+      branchAddr := Cat(aluResult(dataWidth-1, 1), 0.U(1.W))
     }.elsewhen(uop.bjCond === BJCond.j || uop.bjCond === BJCond.jal) {
       branchAddr := uop.predictBT
     }.otherwise {
-      branchAddr := uop.pc + 4.U + Cat(uop.immediate, 0.U(2.W))
+      branchAddr := uop.pc + uop.immediate
     }
 
     (branchTaken, branchAddr)
